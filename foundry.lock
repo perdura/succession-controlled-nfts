@@ -1,0 +1,8 @@
+{
+  "lib/reference": {
+    "tag": {
+      "name": "v0.3.1",
+      "rev": "43a84573bb47b0df3ab543a20365f4974f56a809"
+    }
+  }
+}
