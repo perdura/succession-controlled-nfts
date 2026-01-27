@@ -22,10 +22,7 @@ contract EstateFactory is ReentrancyGuard {
     address public immutable erc6551AccountImplementation;
 
     event EstateCreated(
-        address indexed user,
-        uint256 indexed tokenId,
-        address registry,
-        address tba
+        address indexed user, uint256 indexed tokenId, address registry, address tba
     );
 
     constructor(
@@ -51,30 +48,22 @@ contract EstateFactory is ReentrancyGuard {
     /// @return tokenId Minted Controller NFT token ID
     /// @return registry Deployed succession registry clone
     /// @return tba ERC-6551 token-bound account
-    function createEstate() external nonReentrant returns (
-        uint256 tokenId,
-        address registry,
-        address tba
-    ) {
+    function createEstate()
+        external
+        nonReentrant
+        returns (uint256 tokenId, address registry, address tba)
+    {
         address user = msg.sender;
 
         tokenId = controllerNFT.mintFor(user);
         registry = registryImplementation.clone();
 
-        SimpleSuccessionRegistry(registry).initialize(
-            user,
-            address(controllerNFT),
-            address(this)
-        );
+        SimpleSuccessionRegistry(registry).initialize(user, address(controllerNFT), address(this));
 
         controllerNFT.authorizeRegistry(user, registry);
 
         tba = erc6551Registry.createAccount(
-            erc6551AccountImplementation,
-            bytes32(0),
-            block.chainid,
-            address(controllerNFT),
-            tokenId
+            erc6551AccountImplementation, bytes32(0), block.chainid, address(controllerNFT), tokenId
         );
 
         emit EstateCreated(user, tokenId, registry, tba);

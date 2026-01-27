@@ -11,7 +11,7 @@ contract SimpleSuccessionRegistryTest is BaseTest {
         super.setUp();
 
         vm.prank(alice);
-        (, registry, ) = factory.createEstate();
+        (, registry,) = factory.createEstate();
     }
 
     function test_RegistryInitialization() public view {
@@ -39,7 +39,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
         vm.prank(attacker);
         vm.expectRevert(SimpleSuccessionRegistry.NotFactory.selector);
-        SimpleSuccessionRegistry(clone).initialize(attacker, address(controllerNFT), address(factory));
+        SimpleSuccessionRegistry(clone)
+            .initialize(attacker, address(controllerNFT), address(factory));
     }
 
     function test_RevertWhen_ReinitializingClone() public {
@@ -50,29 +51,37 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_SetupPolicy_SixMonths() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
-        SimpleSuccessionRegistry.Policy memory policy = SimpleSuccessionRegistry(registry).getPolicy();
+        SimpleSuccessionRegistry.Policy memory policy =
+            SimpleSuccessionRegistry(registry).getPolicy();
         assertEq(policy.beneficiary, bob);
-        assertEq(uint256(policy.waitPeriod), uint256(SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS));
+        assertEq(
+            uint256(policy.waitPeriod), uint256(SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS)
+        );
         assertTrue(policy.configured);
     }
 
     function test_SetupPolicy_OneYear() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.ONE_YEAR);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.ONE_YEAR);
 
-        SimpleSuccessionRegistry.Policy memory policy = SimpleSuccessionRegistry(registry).getPolicy();
+        SimpleSuccessionRegistry.Policy memory policy =
+            SimpleSuccessionRegistry(registry).getPolicy();
         assertEq(uint256(policy.waitPeriod), uint256(SimpleSuccessionRegistry.WaitPeriod.ONE_YEAR));
     }
 
     function test_RevertWhen_AlreadyConfigured() public {
         vm.startPrank(alice);
 
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.expectRevert(SimpleSuccessionRegistry.AlreadyConfigured.selector);
-        SimpleSuccessionRegistry(registry).setupPolicy(charlie, SimpleSuccessionRegistry.WaitPeriod.ONE_YEAR);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(charlie, SimpleSuccessionRegistry.WaitPeriod.ONE_YEAR);
 
         vm.stopPrank();
     }
@@ -80,18 +89,21 @@ contract SimpleSuccessionRegistryTest is BaseTest {
     function test_RevertWhen_ZeroBeneficiary() public {
         vm.prank(alice);
         vm.expectRevert(SimpleSuccessionRegistry.ZeroAddress.selector);
-        SimpleSuccessionRegistry(registry).setupPolicy(address(0), SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(address(0), SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
     }
 
     function test_RevertWhen_NonOwnerConfigures() public {
         vm.prank(bob);
         vm.expectRevert();
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
     }
 
     function test_CheckIn() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         uint64 initialCheckIn = SimpleSuccessionRegistry(registry).getPolicy().lastCheckIn;
 
@@ -106,7 +118,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_CheckInResetsSuccessionTimer() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 179 days);
 
@@ -132,7 +145,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_MultipleCheckIns_ExtendTimer() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         for (uint256 i = 0; i < 5; i++) {
             vm.warp(block.timestamp + 100 days);
@@ -149,7 +163,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_RevertWhen_NotOwnerChecksIn() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 8 days);
 
@@ -160,7 +175,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_RevertWhen_AttackerCallsCheckIn() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.prank(attacker);
         vm.expectRevert();
@@ -175,7 +191,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_ExecuteSuccession_SixMonths() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 181 days);
 
@@ -187,7 +204,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_ExecuteSuccession_OneYear() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.ONE_YEAR);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.ONE_YEAR);
 
         vm.warp(block.timestamp + 366 days);
 
@@ -198,7 +216,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_SuccessionAtExactBoundary_SixMonths() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         uint64 lastCheckIn = SimpleSuccessionRegistry(registry).getPolicy().lastCheckIn;
 
@@ -211,7 +230,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_SuccessionAtExactBoundary_OneYear() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.ONE_YEAR);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.ONE_YEAR);
 
         uint64 lastCheckIn = SimpleSuccessionRegistry(registry).getPolicy().lastCheckIn;
 
@@ -224,7 +244,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_RevertWhen_TooEarlyTransfer() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 179 days);
 
@@ -240,7 +261,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_RevertWhen_NotBeneficiary() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 181 days);
 
@@ -251,7 +273,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_RevertWhen_AttackerCallsExecuteSuccession() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 181 days);
 
@@ -262,7 +285,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_RevertWhen_InvalidSubject() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 181 days);
 
@@ -281,18 +305,21 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_UpdateBeneficiary() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.prank(alice);
         SimpleSuccessionRegistry(registry).updateBeneficiary(charlie);
 
-        SimpleSuccessionRegistry.Policy memory policy = SimpleSuccessionRegistry(registry).getPolicy();
+        SimpleSuccessionRegistry.Policy memory policy =
+            SimpleSuccessionRegistry(registry).getPolicy();
         assertEq(policy.beneficiary, charlie);
     }
 
     function test_UpdateBeneficiary_ResetsTimer() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 170 days);
 
@@ -309,7 +336,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_BeneficiaryUpdateChangesWhoCanClaim() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.prank(alice);
         SimpleSuccessionRegistry(registry).updateBeneficiary(charlie);
@@ -327,7 +355,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_RevertWhen_NotOwnerUpdatesBeneficiary() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.prank(bob);
         vm.expectRevert();
@@ -336,7 +365,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_RevertWhen_AttackerUpdatesPolicy() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.prank(attacker);
         vm.expectRevert();
@@ -351,7 +381,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_RevertWhen_UpdateBeneficiaryToZero() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.prank(alice);
         vm.expectRevert(SimpleSuccessionRegistry.ZeroAddress.selector);
@@ -370,10 +401,11 @@ contract SimpleSuccessionRegistryTest is BaseTest {
             vm.deal(user, 10 ether);
 
             vm.prank(user);
-            (, address userRegistry, ) = factory.createEstate();
+            (, address userRegistry,) = factory.createEstate();
 
             vm.prank(user);
-            SimpleSuccessionRegistry(userRegistry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+            SimpleSuccessionRegistry(userRegistry)
+                .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
             vm.warp(block.timestamp + 180 days);
 
@@ -384,25 +416,32 @@ contract SimpleSuccessionRegistryTest is BaseTest {
         assertEq(controllerNFT.getUserOwnedTokens(bob).length, maxTokens);
 
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 181 days);
 
         vm.prank(bob);
-        vm.expectRevert(abi.encodeWithSelector(SimpleSuccessionRegistry.InsufficientSpace.selector, maxTokens, 1, 0));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                SimpleSuccessionRegistry.InsufficientSpace.selector, maxTokens, 1, 0
+            )
+        );
         SimpleSuccessionRegistry(registry).executeSuccession(alice);
     }
 
     function test_IsSuccessionOpen_BeforeWaitingPeriod() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         assertFalse(SimpleSuccessionRegistry(registry).isSuccessionOpen(alice));
     }
 
     function test_IsSuccessionOpen_AfterWaitingPeriod() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 181 days);
         assertTrue(SimpleSuccessionRegistry(registry).isSuccessionOpen(alice));
@@ -410,7 +449,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_IsSuccessionOpen_WrongSubject() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 181 days);
         assertFalse(SimpleSuccessionRegistry(registry).isSuccessionOpen(bob));
@@ -418,7 +458,8 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_GetStatus() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         (
             bool configured,
@@ -439,11 +480,13 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_GetStatus_WhenOpen() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 181 days);
 
-        (, , , , uint256 secondsUntilOpen, bool isOpen) = SimpleSuccessionRegistry(registry).getStatus();
+        (,,,, uint256 secondsUntilOpen, bool isOpen) =
+            SimpleSuccessionRegistry(registry).getStatus();
 
         assertEq(secondsUntilOpen, 0);
         assertTrue(isOpen);
@@ -451,9 +494,11 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_GetPolicy() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.ONE_YEAR);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.ONE_YEAR);
 
-        SimpleSuccessionRegistry.Policy memory policy = SimpleSuccessionRegistry(registry).getPolicy();
+        SimpleSuccessionRegistry.Policy memory policy =
+            SimpleSuccessionRegistry(registry).getPolicy();
 
         assertEq(policy.beneficiary, bob);
         assertEq(uint256(policy.waitPeriod), uint256(SimpleSuccessionRegistry.WaitPeriod.ONE_YEAR));
@@ -462,14 +507,16 @@ contract SimpleSuccessionRegistryTest is BaseTest {
 
     function test_GetBeneficiary() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         assertEq(SimpleSuccessionRegistry(registry).getBeneficiary(), bob);
     }
 
     function test_Gas_ExecuteSuccession() public {
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 181 days);
 

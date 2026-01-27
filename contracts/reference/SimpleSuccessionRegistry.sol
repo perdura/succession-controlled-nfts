@@ -50,10 +50,7 @@ contract SimpleSuccessionRegistry is
     event BeneficiaryUpdated(address indexed oldBeneficiary, address indexed newBeneficiary);
     event CheckedIn(uint64 timestamp);
     event SuccessionDetails(
-        address indexed from,
-        address indexed to,
-        uint256 transferred,
-        uint256 skipped
+        address indexed from, address indexed to, uint256 transferred, uint256 skipped
     );
 
     constructor() {
@@ -62,11 +59,10 @@ contract SimpleSuccessionRegistry is
 
     /// @notice Initialize registry clone.
     /// @dev Only callable by factory during deployment.
-    function initialize(
-        address _owner,
-        address _controllerNFT,
-        address _factory
-    ) external initializer {
+    function initialize(address _owner, address _controllerNFT, address _factory)
+        external
+        initializer
+    {
         if (_owner == address(0) || _controllerNFT == address(0)) revert ZeroAddress();
         if (msg.sender != _factory) revert NotFactory();
 
@@ -77,10 +73,7 @@ contract SimpleSuccessionRegistry is
     }
 
     /// @notice Configure succession policy. Can only be called once.
-    function setupPolicy(
-        address beneficiary,
-        WaitPeriod waitPeriod
-    ) external onlyOwner {
+    function setupPolicy(address beneficiary, WaitPeriod waitPeriod) external onlyOwner {
         if (policy.configured) revert AlreadyConfigured();
         if (beneficiary == address(0)) revert ZeroAddress();
 
@@ -148,9 +141,8 @@ contract SimpleSuccessionRegistry is
 
         uint256 beneficiaryTokenCount = controllerNFT.getUserOwnedTokens(_policy.beneficiary).length;
         uint256 maxTokens = controllerNFT.MAX_INHERITED_TOKENS();
-        uint256 availableSlots = maxTokens > beneficiaryTokenCount
-            ? maxTokens - beneficiaryTokenCount
-            : 0;
+        uint256 availableSlots =
+            maxTokens > beneficiaryTokenCount ? maxTokens - beneficiaryTokenCount : 0;
 
         if (availableSlots == 0) {
             revert InsufficientSpace(beneficiaryTokenCount, count, 0);
@@ -159,11 +151,8 @@ contract SimpleSuccessionRegistry is
         uint256 tokensToTransfer = count > availableSlots ? availableSlots : count;
 
         for (uint256 i = 0; i < tokensToTransfer; i++) {
-            IERC721(address(controllerNFT)).safeTransferFrom(
-                owner_,
-                _policy.beneficiary,
-                orderedTokens[i]
-            );
+            IERC721(address(controllerNFT))
+                .safeTransferFrom(owner_, _policy.beneficiary, orderedTokens[i]);
         }
 
         uint256 skipped = count - tokensToTransfer;
@@ -181,14 +170,18 @@ contract SimpleSuccessionRegistry is
     }
 
     /// @notice Get registry status including time until succession opens.
-    function getStatus() external view returns (
-        bool configured,
-        address beneficiary,
-        WaitPeriod waitPeriod,
-        uint64 lastCheckIn,
-        uint256 secondsUntilOpen,
-        bool isOpen
-    ) {
+    function getStatus()
+        external
+        view
+        returns (
+            bool configured,
+            address beneficiary,
+            WaitPeriod waitPeriod,
+            uint64 lastCheckIn,
+            uint256 secondsUntilOpen,
+            bool isOpen
+        )
+    {
         configured = policy.configured;
 
         if (!configured) {
@@ -215,10 +208,11 @@ contract SimpleSuccessionRegistry is
         return policy.waitPeriod == WaitPeriod.SIX_MONTHS ? SIX_MONTHS : ONE_YEAR;
     }
 
-    function _orderTokens(
-        address owner_,
-        uint256[] memory allTokens
-    ) internal view returns (uint256[] memory orderedTokens, uint256 count) {
+    function _orderTokens(address owner_, uint256[] memory allTokens)
+        internal
+        view
+        returns (uint256[] memory orderedTokens, uint256 count)
+    {
         orderedTokens = new uint256[](allTokens.length);
         count = 0;
 

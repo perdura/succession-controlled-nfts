@@ -19,14 +19,14 @@ import "../contracts/reference/EstateFactory.sol";
 contract Deploy is Script {
     // Canonical ERC-6551 registry (same on all chains)
     address constant ERC6551_REGISTRY = 0x000000006551c19487814612e58FE06813775758;
-    
+
     // Reference ERC-6551 account implementation
     address constant ERC6551_ACCOUNT_IMPL = 0x55266d75D1a14E4572138116aF39863Ed6596E7F;
 
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         address deployer = vm.addr(deployerPrivateKey);
-        
+
         console.log("Deployer:", deployer);
         console.log("Balance:", deployer.balance);
         console.log("Chain ID:", block.chainid);
@@ -44,10 +44,7 @@ contract Deploy is Script {
 
         // 3. Deploy EstateFactory
         EstateFactory factory = new EstateFactory(
-            address(controllerNFT),
-            address(registryImpl),
-            ERC6551_REGISTRY,
-            ERC6551_ACCOUNT_IMPL
+            address(controllerNFT), address(registryImpl), ERC6551_REGISTRY, ERC6551_ACCOUNT_IMPL
         );
         console.log("EstateFactory:", address(factory));
 

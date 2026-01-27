@@ -50,10 +50,7 @@ abstract contract BaseTest is Test {
         registryImpl = new SimpleSuccessionRegistry();
 
         factory = new EstateFactory(
-            address(controllerNFT),
-            address(registryImpl),
-            ERC6551_REGISTRY,
-            ERC6551_ACCOUNT_IMPL
+            address(controllerNFT), address(registryImpl), ERC6551_REGISTRY, ERC6551_ACCOUNT_IMPL
         );
 
         controllerNFT.setTrustedFactory(address(factory), true);

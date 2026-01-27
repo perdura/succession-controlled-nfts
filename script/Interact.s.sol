@@ -26,10 +26,10 @@ contract Interact is Script {
         address deployer = vm.addr(deployerPrivateKey);
         address factoryAddr = vm.envAddress("FACTORY");
         address beneficiary = vm.envAddress("BENEFICIARY");
-        
+
         // Default to 6 months if not specified
         uint8 waitPeriod = uint8(vm.envOr("WAIT_PERIOD", uint256(0)));
-        
+
         console.log("=== Estate Creation ===");
         console.log("Deployer:", deployer);
         console.log("Factory:", factoryAddr);
@@ -43,18 +43,16 @@ contract Interact is Script {
 
         // 1. Create estate (NFT + Registry + TBA)
         (uint256 tokenId, address registry, address tba) = factory.createEstate();
-        
+
         console.log("Estate created:");
         console.log("  Token ID:", tokenId);
         console.log("  Registry:", registry);
         console.log("  TBA:", tba);
 
         // 2. Configure succession policy
-        SimpleSuccessionRegistry(registry).setupPolicy(
-            beneficiary,
-            SimpleSuccessionRegistry.WaitPeriod(waitPeriod)
-        );
-        
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(beneficiary, SimpleSuccessionRegistry.WaitPeriod(waitPeriod));
+
         console.log("");
         console.log("Policy configured:");
         console.log("  Beneficiary:", beneficiary);
@@ -64,9 +62,13 @@ contract Interact is Script {
 
         console.log("");
         console.log("=== Complete ===");
-        console.log("Your estate is now active. Check in periodically to reset the succession timer.");
+        console.log(
+            "Your estate is now active. Check in periodically to reset the succession timer."
+        );
         console.log("");
         console.log("To check in, run:");
-        console.log("  cast send", registry, '"checkIn()" --rpc-url $RPC_URL --private-key $PRIVATE_KEY');
+        console.log(
+            "  cast send", registry, '"checkIn()" --rpc-url $RPC_URL --private-key $PRIVATE_KEY'
+        );
     }
 }

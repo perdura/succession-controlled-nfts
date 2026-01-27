@@ -10,7 +10,6 @@ import "../interfaces/IERC721SuccessionControlled.sol";
 ///         Each address mints once. Transfers restricted to authorized succession registry.
 /// @author Tian (@tian0)
 contract ControllerNFT is ERC721, Ownable, IERC721SuccessionControlled {
-
     error AlreadyMinted();
     error RegistryOnly();
     error CannotBurnOriginalToken();
@@ -19,7 +18,9 @@ contract ControllerNFT is ERC721, Ownable, IERC721SuccessionControlled {
     error ZeroAddress();
     error RegistryAlreadySet();
     error TokenNotFound();
-    error InheritedTokenLimitExceeded(uint256 currentCount, uint256 incomingCount, uint256 maxAllowed);
+    error InheritedTokenLimitExceeded(
+        uint256 currentCount, uint256 incomingCount, uint256 maxAllowed
+    );
 
     uint256 public constant MAX_INHERITED_TOKENS = 8;
 
@@ -92,9 +93,7 @@ contract ControllerNFT is ERC721, Ownable, IERC721SuccessionControlled {
 
             if (_userOwnedTokens[to].length >= MAX_INHERITED_TOKENS) {
                 revert InheritedTokenLimitExceeded(
-                    _userOwnedTokens[to].length,
-                    1,
-                    MAX_INHERITED_TOKENS
+                    _userOwnedTokens[to].length, 1, MAX_INHERITED_TOKENS
                 );
             }
         }

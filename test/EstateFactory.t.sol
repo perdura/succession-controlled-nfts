@@ -4,7 +4,6 @@ pragma solidity ^0.8.20;
 import "./BaseTest.t.sol";
 
 contract EstateFactoryTest is BaseTest {
-
     function test_FactoryImmutables() public view {
         assertEq(address(factory.controllerNFT()), address(controllerNFT));
         assertEq(factory.registryImplementation(), address(registryImpl));
@@ -14,47 +13,33 @@ contract EstateFactoryTest is BaseTest {
 
     function test_RevertWhen_ConstructorZeroControllerNFT() public {
         vm.expectRevert(EstateFactory.ZeroAddress.selector);
-        new EstateFactory(
-            address(0),
-            address(registryImpl),
-            ERC6551_REGISTRY,
-            ERC6551_ACCOUNT_IMPL
-        );
+        new EstateFactory(address(0), address(registryImpl), ERC6551_REGISTRY, ERC6551_ACCOUNT_IMPL);
     }
 
     function test_RevertWhen_ConstructorZeroRegistryImpl() public {
         vm.expectRevert(EstateFactory.ZeroAddress.selector);
         new EstateFactory(
-            address(controllerNFT),
-            address(0),
-            ERC6551_REGISTRY,
-            ERC6551_ACCOUNT_IMPL
+            address(controllerNFT), address(0), ERC6551_REGISTRY, ERC6551_ACCOUNT_IMPL
         );
     }
 
     function test_RevertWhen_ConstructorZero6551Registry() public {
         vm.expectRevert(EstateFactory.ZeroAddress.selector);
         new EstateFactory(
-            address(controllerNFT),
-            address(registryImpl),
-            address(0),
-            ERC6551_ACCOUNT_IMPL
+            address(controllerNFT), address(registryImpl), address(0), ERC6551_ACCOUNT_IMPL
         );
     }
 
     function test_RevertWhen_ConstructorZero6551AccountImpl() public {
         vm.expectRevert(EstateFactory.ZeroAddress.selector);
         new EstateFactory(
-            address(controllerNFT),
-            address(registryImpl),
-            ERC6551_REGISTRY,
-            address(0)
+            address(controllerNFT), address(registryImpl), ERC6551_REGISTRY, address(0)
         );
     }
 
     function test_CreateEstate_MintsNFT() public {
         vm.prank(alice);
-        (uint256 tokenId, , ) = factory.createEstate();
+        (uint256 tokenId,,) = factory.createEstate();
 
         assertEq(tokenId, 1);
         assertEq(controllerNFT.ownerOf(tokenId), alice);
@@ -63,23 +48,25 @@ contract EstateFactoryTest is BaseTest {
 
     function test_CreateEstate_DeploysRegistry() public {
         vm.prank(alice);
-        (, address registry, ) = factory.createEstate();
+        (, address registry,) = factory.createEstate();
 
         assertTrue(registry != address(0));
         assertEq(SimpleSuccessionRegistry(registry).owner(), alice);
-        assertEq(address(SimpleSuccessionRegistry(registry).controllerNFT()), address(controllerNFT));
+        assertEq(
+            address(SimpleSuccessionRegistry(registry).controllerNFT()), address(controllerNFT)
+        );
     }
 
     function test_CreateEstate_AuthorizesRegistry() public {
         vm.prank(alice);
-        (, address registry, ) = factory.createEstate();
+        (, address registry,) = factory.createEstate();
 
         assertEq(controllerNFT.successionRegistryOf(alice), registry);
     }
 
     function test_CreateEstate_CreatesTBA() public {
         vm.prank(alice);
-        (, , address tba) = factory.createEstate();
+        (,, address tba) = factory.createEstate();
 
         assertTrue(tba != address(0));
     }
@@ -101,7 +88,8 @@ contract EstateFactoryTest is BaseTest {
         (uint256 bobTokenId, address bobRegistry, address bobTba) = factory.createEstate();
 
         vm.prank(charlie);
-        (uint256 charlieTokenId, address charlieRegistry, address charlieTba) = factory.createEstate();
+        (uint256 charlieTokenId, address charlieRegistry, address charlieTba) =
+            factory.createEstate();
 
         assertEq(aliceTokenId, 1);
         assertEq(bobTokenId, 2);

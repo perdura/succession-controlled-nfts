@@ -12,7 +12,7 @@ interface IERC721SuccessionControlled is IERC721 {
     /// @param user The token owner
     /// @param registry The authorized registry address
     event SuccessionRegistryAuthorized(address indexed user, address indexed registry);
-    
+
     /// @notice Returns the succession registry authorized to transfer a user's tokens.
     /// @param user The token owner
     /// @return The authorized registry address, or address(0) if unrestricted

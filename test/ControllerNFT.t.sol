@@ -4,7 +4,6 @@ pragma solidity ^0.8.20;
 import "./BaseTest.t.sol";
 
 contract ControllerNFTTest is BaseTest {
-
     function test_MintFirstNFT() public {
         vm.startPrank(alice);
 
@@ -83,7 +82,7 @@ contract ControllerNFTTest is BaseTest {
 
     function test_RevertWhen_AttackerTransfersNFT() public {
         vm.prank(alice);
-        (uint256 tokenId, , ) = factory.createEstate();
+        (uint256 tokenId,,) = factory.createEstate();
 
         vm.prank(attacker);
         vm.expectRevert();
@@ -108,7 +107,7 @@ contract ControllerNFTTest is BaseTest {
 
     function test_RegistryAuthorization_ViaFactory() public {
         vm.prank(alice);
-        (uint256 tokenId, address registry, ) = factory.createEstate();
+        (uint256 tokenId, address registry,) = factory.createEstate();
 
         assertEq(controllerNFT.successionRegistryOf(alice), registry);
         assertEq(controllerNFT.ownerOf(tokenId), alice);
@@ -157,10 +156,11 @@ contract ControllerNFTTest is BaseTest {
 
     function test_GetCurrentController_AfterSuccession() public {
         vm.prank(alice);
-        (, address registry, ) = factory.createEstate();
+        (, address registry,) = factory.createEstate();
 
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 181 days);
 
@@ -198,10 +198,11 @@ contract ControllerNFTTest is BaseTest {
 
     function test_BurnInheritedToken() public {
         vm.prank(alice);
-        (, address registry, ) = factory.createEstate();
+        (, address registry,) = factory.createEstate();
 
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 181 days);
 
@@ -231,10 +232,11 @@ contract ControllerNFTTest is BaseTest {
             vm.deal(users[i], 10 ether);
 
             vm.prank(users[i]);
-            (, registries[i], ) = factory.createEstate();
+            (, registries[i],) = factory.createEstate();
 
             vm.prank(users[i]);
-            SimpleSuccessionRegistry(registries[i]).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+            SimpleSuccessionRegistry(registries[i])
+                .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
         }
 
         vm.warp(block.timestamp + 181 days);
@@ -288,10 +290,11 @@ contract ControllerNFTTest is BaseTest {
         factory.createEstate();
 
         vm.prank(bob);
-        (, address bobRegistry, ) = factory.createEstate();
+        (, address bobRegistry,) = factory.createEstate();
 
         vm.prank(bob);
-        SimpleSuccessionRegistry(bobRegistry).setupPolicy(alice, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(bobRegistry)
+            .setupPolicy(alice, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 181 days);
 

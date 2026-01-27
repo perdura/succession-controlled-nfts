@@ -4,13 +4,13 @@ pragma solidity ^0.8.20;
 import "./BaseTest.t.sol";
 
 contract IntegrationTest is BaseTest {
-
     function test_FullLifecycle_CreateConfigureExecute() public {
         vm.prank(alice);
-        (uint256 tokenId, address registry, ) = factory.createEstate();
+        (uint256 tokenId, address registry,) = factory.createEstate();
 
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         assertEq(controllerNFT.ownerOf(tokenId), alice);
         assertFalse(SimpleSuccessionRegistry(registry).isSuccessionOpen(alice));
@@ -28,10 +28,11 @@ contract IntegrationTest is BaseTest {
 
     function test_ChainedInheritance_ThreeGenerations() public {
         vm.prank(alice);
-        (uint256 tokenId, address aliceRegistry, ) = factory.createEstate();
+        (uint256 tokenId, address aliceRegistry,) = factory.createEstate();
 
         vm.prank(alice);
-        SimpleSuccessionRegistry(aliceRegistry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(aliceRegistry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 181 days);
 
@@ -41,10 +42,11 @@ contract IntegrationTest is BaseTest {
         assertEq(controllerNFT.ownerOf(tokenId), bob);
 
         vm.prank(bob);
-        (, address bobRegistry, ) = factory.createEstate();
+        (, address bobRegistry,) = factory.createEstate();
 
         vm.prank(bob);
-        SimpleSuccessionRegistry(bobRegistry).setupPolicy(charlie, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(bobRegistry)
+            .setupPolicy(charlie, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         skip(181 days);
 
@@ -59,10 +61,11 @@ contract IntegrationTest is BaseTest {
 
     function test_CheckInPreventsSuccession() public {
         vm.prank(alice);
-        (, address registry, ) = factory.createEstate();
+        (, address registry,) = factory.createEstate();
 
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.warp(block.timestamp + 170 days);
 
@@ -80,16 +83,18 @@ contract IntegrationTest is BaseTest {
 
     function test_ConcurrentEstates_IndependentTimers() public {
         vm.prank(alice);
-        (, address aliceRegistry, ) = factory.createEstate();
+        (, address aliceRegistry,) = factory.createEstate();
 
         vm.prank(bob);
-        (, address bobRegistry, ) = factory.createEstate();
+        (, address bobRegistry,) = factory.createEstate();
 
         vm.prank(alice);
-        SimpleSuccessionRegistry(aliceRegistry).setupPolicy(charlie, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(aliceRegistry)
+            .setupPolicy(charlie, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.prank(bob);
-        SimpleSuccessionRegistry(bobRegistry).setupPolicy(charlie, SimpleSuccessionRegistry.WaitPeriod.ONE_YEAR);
+        SimpleSuccessionRegistry(bobRegistry)
+            .setupPolicy(charlie, SimpleSuccessionRegistry.WaitPeriod.ONE_YEAR);
 
         vm.warp(block.timestamp + 181 days);
 
@@ -114,29 +119,32 @@ contract IntegrationTest is BaseTest {
 
     function test_RegistryIsolation_SeparateOwners() public {
         vm.prank(alice);
-        (, address aliceRegistry, ) = factory.createEstate();
+        (, address aliceRegistry,) = factory.createEstate();
 
         vm.prank(bob);
-        (, address bobRegistry, ) = factory.createEstate();
+        (, address bobRegistry,) = factory.createEstate();
 
         assertEq(SimpleSuccessionRegistry(aliceRegistry).owner(), alice);
         assertEq(SimpleSuccessionRegistry(bobRegistry).owner(), bob);
 
         vm.prank(bob);
         vm.expectRevert();
-        SimpleSuccessionRegistry(aliceRegistry).setupPolicy(charlie, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(aliceRegistry)
+            .setupPolicy(charlie, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
 
         vm.prank(alice);
         vm.expectRevert();
-        SimpleSuccessionRegistry(bobRegistry).setupPolicy(charlie, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
+        SimpleSuccessionRegistry(bobRegistry)
+            .setupPolicy(charlie, SimpleSuccessionRegistry.WaitPeriod.SIX_MONTHS);
     }
 
     function test_OneYearWaitPeriod_FullCycle() public {
         vm.prank(alice);
-        (uint256 tokenId, address registry, ) = factory.createEstate();
+        (uint256 tokenId, address registry,) = factory.createEstate();
 
         vm.prank(alice);
-        SimpleSuccessionRegistry(registry).setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.ONE_YEAR);
+        SimpleSuccessionRegistry(registry)
+            .setupPolicy(bob, SimpleSuccessionRegistry.WaitPeriod.ONE_YEAR);
 
         vm.warp(block.timestamp + 364 days);
         assertFalse(SimpleSuccessionRegistry(registry).isSuccessionOpen(alice));
