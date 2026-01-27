@@ -25,3 +25,4 @@ yarn.lock
 *-old.*
 archive/
 lcov.info
+lib/
