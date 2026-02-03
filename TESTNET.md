@@ -98,4 +98,4 @@ cast send YOUR_REGISTRY_ADDRESS "checkIn()" --rpc-url $RPC_URL --private-key $PR
 
 ---
 
-Deployed January 2026
+Deployed February 2026
