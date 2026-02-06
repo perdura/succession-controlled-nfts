@@ -36,6 +36,15 @@ Live on Sepolia with an example estate. See [TESTNET.md](./TESTNET.md) for addre
 
 Mint an NFT, deploy a registry, link token-bound accounts, configure your policy. If you stop checking in, your beneficiary claims control.
 
+```mermaid
+flowchart LR
+    A(No Estate) -->|"createEstate()\nmint, clone registry, create TBA"| B(Created)
+    B -->|"setupPolicy()\nset beneficiary, start timer"| C(Active)
+    C -.->|"elapsed >= waitPeriod"| D(Succession Open)
+    D -->|"executeSuccession()\ntransfer NFTs to beneficiary"| E(Succeeded)
+    D -->|"checkIn() / updateBeneficiary()\nreset timer"| C
+```
+
 The reference implementation's `EstateFactory` bundles creation into one transaction:
 ```solidity
 // Create estate: NFT + Registry + TBA in one transaction
