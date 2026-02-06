@@ -3,7 +3,7 @@ eip: XXXX
 title: Succession-Controlled NFTs
 description: ERC-721 extension enabling registry-controlled transfers for on-chain succession
 author: Tian (@tian0) <tian0@perdura.xyz>
-discussions-to: TBD
+discussions-to: https://ethereum-magicians.org/t/draft-eip-succession-controlled-nfts/27662
 status: Draft
 type: Standards Track
 category: ERC

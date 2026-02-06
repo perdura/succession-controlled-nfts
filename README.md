@@ -118,7 +118,7 @@ For production use, get a professional audit.
 ## Links
 
 - [GitHub](https://github.com/perdura/succession-controlled-nfts)
-- [Ethereum Magicians Discussion](link-pending)
+- [Ethereum Magicians Discussion](https://ethereum-magicians.org/t/draft-eip-succession-controlled-nfts/27662)
 
 ---
 
