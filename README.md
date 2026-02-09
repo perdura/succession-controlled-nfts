@@ -2,7 +2,7 @@
 
 An ERC-721 extension enabling registry-controlled transfers for on-chain succession.
 
-**Status:** Preparing for EIP submission. Community feedback welcome.
+**Status:** Preparing for ERC submission. Community feedback welcome.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![License: CC0](https://img.shields.io/badge/License-CC0-lightgrey.svg)](LICENSE-INTERFACES)
@@ -96,7 +96,7 @@ test/
 
 ## Documentation
 
-- [EIP Specification](./docs/eip.md)
+- [ERC Specification](./docs/erc.md)
 - [Security Considerations](./docs/SecurityConsiderations.md)
 
 ## Security
@@ -118,7 +118,7 @@ For production use, get a professional audit.
 ## Links
 
 - [GitHub](https://github.com/perdura/succession-controlled-nfts)
-- [Ethereum Magicians Discussion](https://ethereum-magicians.org/t/draft-eip-succession-controlled-nfts/27662)
+- [Ethereum Magicians Discussion](https://ethereum-magicians.org/t/draft-erc-succession-controlled-nfts/27662)
 
 ---
 

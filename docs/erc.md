@@ -1,5 +1,5 @@
 ---
-eip: XXXX
+erc: XXXX
 title: Succession-Controlled NFTs
 description: ERC-721 extension enabling registry-controlled transfers for on-chain succession
 author: Tian (@tian0) <tian0@perdura.xyz>
@@ -13,7 +13,7 @@ requires: 721, 1167, 6551
 
 ## Abstract
 
-This EIP defines a minimal interface for ERC-721 tokens that delegate transfer authority to succession registries. When a registry indicates succession conditions are met, only that registry may transfer the user's token. Combined with ERC-6551 token-bound accounts, this enables trustless digital estate planning: a single NFT can control multiple token-bound accounts, and when it transfers through succession, control of all linked accounts automatically transfers to the new holder.
+This ERC defines a minimal interface for ERC-721 tokens that delegate transfer authority to succession registries. When a registry indicates succession conditions are met, only that registry may transfer the user's token. Combined with ERC-6551 token-bound accounts, this enables trustless digital estate planning: a single NFT can control multiple token-bound accounts, and when it transfers through succession, control of all linked accounts automatically transfers to the new holder.
 
 The standard defines two interfaces: `IERC721SuccessionControlled` (an ERC-721 extension) and `ISuccessionRegistry` (policy verification). Implementations have freedom to define their own policy logic, whether time-based, guardian-approved, oracle-triggered, or any custom mechanism.
 
